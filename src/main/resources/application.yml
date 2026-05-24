@@ -1,0 +1,51 @@
+server:
+  port: 8080
+
+spring:
+  # 1. Database Configuration (Updated to match Spring Boot 3.x style)
+  datasource:
+    url: jdbc:mysql://localhost:3306/menu_service_db?createDatabaseIfNotExist=true
+    username: root
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      idle-timeout: 30000
+
+  # 2. Redis Configuration (For Sentinel Idempotency)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+  # 3. JPA/Hibernate Settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect # Updated for modern MySQL
+
+  # 4. Spring Batch (CRITICAL: Must be under 'spring')
+  batch:
+    jdbc:
+      initialize-schema: always 
+
+# 5. External API Mapping (Matches your @FeignClient url)
+external:
+  api:
+    url: http://localhost:8081
+  carbon-api:
+    url: http://localhost:8082
+
+logging:
+  level:
+    org.springframework.security: DEBUG
